@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     env_file: .env
     image: app
-    container_name: go02
+    container_name: go03
     restart: unless-stopped
     networks:
       - golangnetwork
@@ -18,9 +18,9 @@ services:
 
   moto_aws:
     image: motoserver/moto:5.0.13
-    container_name: aws03
+    container_name: aws04
     depends_on:
-      - nginx
+      - api
     ports:
       - "5000:5000"
     network_mode: bridge  
