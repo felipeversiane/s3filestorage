@@ -9,6 +9,10 @@ type config struct {
 	Api struct {
 		Port string
 	}
+	AWS struct {
+		ACCESS_KEY        string
+		SECRET_ACCESS_KEY string
+	}
 	S3 struct {
 		Region   string
 		Endpoint string
@@ -34,6 +38,13 @@ func NewConfig() *config {
 			Port string
 		}{
 			Port: getEnvOrDie("PORT"),
+		},
+		AWS: struct {
+			ACCESS_KEY        string
+			SECRET_ACCESS_KEY string
+		}{
+			ACCESS_KEY:        getEnvOrDie("AWS_ACCESS_KEY"),
+			SECRET_ACCESS_KEY: getEnvOrDie("AWS_SECRET_ACCESS_KEY"), 
 		},
 	}
 }

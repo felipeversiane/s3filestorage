@@ -6,24 +6,34 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/felipeversiane/s3filestorage/internal/log"
 	"github.com/felipeversiane/s3filestorage/internal/router"
 
+	"github.com/felipeversiane/s3filestorage/internal/config"
 	"github.com/felipeversiane/s3filestorage/internal/services/aws"
-	"github.com/felipeversiane/s3filestorage/pkg/config"
 )
 
 func main() {
+	log.Configure()
 	conf := config.NewConfig()
+	slog.Info("Config init...")
 
-	err := aws.NewS3Service(conf.S3.Bucket, conf.S3.Region, conf.S3.ACL)
+	slog.Info("Creating a new AWS-S3 service...")
+	err := aws.NewS3Service(conf.S3.Bucket, conf.S3.Region, conf.S3.ACL, conf.AWS.ACCESS_KEY, conf.AWS.SECRET_ACCESS_KEY, conf.S3.Endpoint)
 	if err != nil {
 		slog.Error(fmt.Sprintf("init s3 service error: %s", err))
 	}
-	aws.S3Client.CreateBucket(context.Background())
+	slog.Info("New AWS-S3 service created...")
 
+	slog.Info("Creating a new AWS-S3 bucket...")
+	aws.S3Client.CreateBucket(context.Background())
+	slog.Info("New AWS-S3 bucket created...")
+
+	slog.Info("Creating http server...")
 	mux := http.NewServeMux()
 	router.SetupRoutes(mux)
+	handler := log.LogMiddleware(mux)
 
-	http.ListenAndServe(":"+conf.Api.Port, mux)
-
+	slog.Info(fmt.Sprintf("Server running on port :%s", conf.Api.Port))
+	http.ListenAndServe(":"+conf.Api.Port, handler)
 }

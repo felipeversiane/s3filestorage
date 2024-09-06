@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
@@ -26,14 +27,26 @@ type s3Service struct {
 	ACL    string
 }
 
-func NewS3Service(bucket, region, acl string) error {
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
+func NewS3Service(
+	bucket,
+	region,
+	acl,
+	accessKey,
+	secretAccessKey,
+	endpoint string,
+) error {
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(region),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKey, secretAccessKey, "")),
+	)
 	if err != nil {
 		return fmt.Errorf("unable to load SDK config, %v", err)
 	}
 
 	S3Client = &s3Service{
-		Client: s3.NewFromConfig(cfg),
+		Client: s3.NewFromConfig(cfg, func(o *s3.Options) {
+			o.BaseEndpoint = aws.String(endpoint)
+		}),
 		Bucket: bucket,
 		Region: region,
 		ACL:    acl,
