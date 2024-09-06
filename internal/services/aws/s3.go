@@ -11,6 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
+var S3Client S3Service
+
 type S3Service interface {
 	CreateBucket(ctx context.Context) error
 	UploadFile(ctx context.Context, bucketKey string, fileContent multipart.File) (string, error)
@@ -24,18 +26,20 @@ type s3Service struct {
 	ACL    string
 }
 
-func NewS3Service(bucket, region, acl string) (S3Service, error) {
+func NewS3Service(bucket, region, acl string) error {
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
-		return nil, fmt.Errorf("unable to load SDK config, %v", err)
+		return fmt.Errorf("unable to load SDK config, %v", err)
 	}
 
-	return &s3Service{
+	S3Client = &s3Service{
 		Client: s3.NewFromConfig(cfg),
 		Bucket: bucket,
 		Region: region,
 		ACL:    acl,
-	}, nil
+	}
+
+	return nil
 }
 
 func (s *s3Service) CreateBucket(ctx context.Context) error {

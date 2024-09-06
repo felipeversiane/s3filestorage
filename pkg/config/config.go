@@ -5,9 +5,10 @@ import (
 	"os"
 )
 
-var Conf Config
-
-type Config struct {
+type config struct {
+	Api struct {
+		Port string
+	}
 	S3 struct {
 		Region   string
 		Endpoint string
@@ -16,8 +17,8 @@ type Config struct {
 	}
 }
 
-func NewConfig() {
-	Conf = Config{
+func NewConfig() *config {
+	return &config{
 		S3: struct {
 			Region   string
 			Endpoint string
@@ -29,16 +30,19 @@ func NewConfig() {
 			Bucket:   getEnvOrDie("AWS_S3_BUCKET"),
 			ACL:      getEnvOrDie("AWS_S3_ACL"),
 		},
+		Api: struct {
+			Port string
+		}{
+			Port: getEnvOrDie("PORT"),
+		},
 	}
 }
 
 func getEnvOrDie(key string) string {
 	value := os.Getenv(key)
-
 	if value == "" {
 		err := fmt.Errorf("missing environment variable %s", key)
 		panic(err)
 	}
-
 	return value
 }
