@@ -1,29 +1,29 @@
 version: '3.9'
 
 services:
+  moto_aws:
+    image: motoserver/moto:4.2.14
+    container_name: aws04
+    ports:
+      - "5000:5000"
+    command: s3
+    networks: 
+      - golangnetwork
 
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./build/api/Dockerfile
     env_file: .env
     image: app
+    depends_on:
+      - moto_aws
     container_name: go03
     restart: unless-stopped
-    networks:
+    networks: 
       - golangnetwork
     ports:
       - "8000:8000"
-
-
-  moto_aws:
-    image: motoserver/moto:5.0.13
-    container_name: aws04
-    depends_on:
-      - api
-    ports:
-      - "5000:5000"
-    network_mode: bridge  
 
 networks:
   golangnetwork:
