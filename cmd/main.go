@@ -21,14 +21,14 @@ func main() {
 	slog.Info("Creating a new AWS-S3 service...")
 	err := aws.NewS3Service(conf.S3.Bucket, conf.S3.Region, conf.S3.ACL, conf.AWS.ACCESS_KEY, conf.AWS.SECRET_ACCESS_KEY, conf.S3.Endpoint)
 	if err != nil {
-		slog.Error(fmt.Sprintf("init s3 service error: %s", err))
+		slog.Error(err.Error())
 	}
 	slog.Info("New AWS-S3 service created...")
 
 	slog.Info("Creating a new AWS-S3 bucket...")
 	err = aws.S3Client.CreateBucket(context.Background())
 	if err != nil {
-		slog.Error(fmt.Sprintf("create s3 bucket error: %s", err))
+		slog.Error(err.Error())
 	}
 	slog.Info("New AWS-S3 bucket created...")
 
