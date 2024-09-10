@@ -26,7 +26,10 @@ func main() {
 	slog.Info("New AWS-S3 service created...")
 
 	slog.Info("Creating a new AWS-S3 bucket...")
-	aws.S3Client.CreateBucket(context.Background())
+	err = aws.S3Client.CreateBucket(context.Background())
+	if err != nil {
+		slog.Error(fmt.Sprintf("create s3 bucket error: %s", err))
+	}
 	slog.Info("New AWS-S3 bucket created...")
 
 	slog.Info("Creating http server...")

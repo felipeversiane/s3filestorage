@@ -42,11 +42,11 @@ func NewS3Service(
 	if err != nil {
 		return fmt.Errorf("unable to load SDK config, %v", err)
 	}
-
+	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.BaseEndpoint = aws.String(endpoint)
+	})
 	S3Client = &s3Service{
-		Client: s3.NewFromConfig(cfg, func(o *s3.Options) {
-			o.BaseEndpoint = aws.String(endpoint)
-		}),
+		Client: client,
 		Bucket: bucket,
 		Region: region,
 		ACL:    acl,
