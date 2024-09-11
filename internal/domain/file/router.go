@@ -13,6 +13,7 @@ func FileRouter(v1 *gin.RouterGroup) *gin.RouterGroup {
 	{
 		file.POST("/", handler.InsertHandler)
 		file.GET("/:id", handler.GetOneHandler)
+		file.GET("/", handler.ListAllHandler)
 		file.DELETE("/:id", handler.DeleteHandler)
 
 	}
