@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/felipeversiane/s3filestorage/internal/infra/log"
-	"github.com/felipeversiane/s3filestorage/internal/infra/router"
+	"github.com/felipeversiane/s3filestorage/internal/infra/api/router"
+	"github.com/felipeversiane/s3filestorage/internal/infra/config/log"
 
 	"github.com/felipeversiane/s3filestorage/internal/infra/config"
 	"github.com/felipeversiane/s3filestorage/internal/infra/services/aws"
