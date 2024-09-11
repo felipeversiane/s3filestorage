@@ -3,7 +3,7 @@ package router
 import (
 	"net/http"
 
-	"github.com/felipeversiane/s3filestorage/internal/services/aws"
+	"github.com/felipeversiane/s3filestorage/internal/infra/services/aws"
 )
 
 func SetupRoutes(mux *http.ServeMux) {

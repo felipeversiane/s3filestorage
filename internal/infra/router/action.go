@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/felipeversiane/s3filestorage/internal/services/aws"
+	"github.com/felipeversiane/s3filestorage/internal/infra/services/aws"
 )
 
 func uploadHandler(s3Service aws.S3Service) http.HandlerFunc {

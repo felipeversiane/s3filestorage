@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/felipeversiane/s3filestorage/internal/log"
-	"github.com/felipeversiane/s3filestorage/internal/router"
+	"github.com/felipeversiane/s3filestorage/internal/infra/log"
+	"github.com/felipeversiane/s3filestorage/internal/infra/router"
 
-	"github.com/felipeversiane/s3filestorage/internal/config"
-	"github.com/felipeversiane/s3filestorage/internal/services/aws"
+	"github.com/felipeversiane/s3filestorage/internal/infra/config"
+	"github.com/felipeversiane/s3filestorage/internal/infra/services/aws"
 )
 
 func main() {
