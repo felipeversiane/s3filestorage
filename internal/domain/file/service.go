@@ -7,15 +7,6 @@ import (
 	"github.com/felipeversiane/s3filestorage/internal/infra/config/rest"
 )
 
-const maxFileSize = 10 << 20
-
-var allowedExtensions = map[string]bool{
-	".jpg":  true,
-	".jpeg": true,
-	".png":  true,
-	".gif":  true,
-}
-
 type FileServiceInterface interface {
 	InsertService(ctx context.Context, fileHeader *multipart.FileHeader) (*FileResponse, *rest.RestError)
 	GetOneService(ctx context.Context, fileHeader *multipart.FileHeader) (*FileResponse, *rest.RestError)

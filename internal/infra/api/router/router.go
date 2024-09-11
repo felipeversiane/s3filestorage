@@ -4,11 +4,17 @@ import (
 	"net/http"
 
 	"github.com/felipeversiane/s3filestorage/internal/domain/file"
+	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(mux *http.ServeMux) {
-	file.FileRouter(mux)
-	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+func SetupRoutes(router *gin.Engine) {
+
+	v1 := router.Group("/api/v1")
+	{
+		file.FileRouter(v1)
+	}
+
+	router.GET("/health", func(c *gin.Context) {
+		c.Status(http.StatusOK)
 	})
 }

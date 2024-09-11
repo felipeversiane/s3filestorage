@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/felipeversiane/s3filestorage/internal/infra/api/router"
 	"github.com/felipeversiane/s3filestorage/internal/infra/config/log"
+	"github.com/gin-gonic/gin"
 
 	"github.com/felipeversiane/s3filestorage/internal/infra/config"
 	"github.com/felipeversiane/s3filestorage/internal/infra/services/aws"
@@ -48,10 +48,11 @@ func main() {
 	slog.Info("New AWS-S3 bucket created...")
 
 	slog.Info("Creating http server...")
-	mux := http.NewServeMux()
-	router.SetupRoutes(mux)
-	handler := log.LogMiddleware(mux)
-
+	g := gin.New()
+	g.Use(gin.Recovery())
+	g.Use(log.LogMiddleware())
+	router.SetupRoutes(g)
 	slog.Info(fmt.Sprintf("Server running on port :%s", config.Conf.Api.Port))
-	http.ListenAndServe(":"+config.Conf.Api.Port, handler)
+	g.Run(":" + config.Conf.Api.Port)
+
 }

@@ -1,7 +1,7 @@
 package file
 
 import (
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 type fileHandler struct {
@@ -9,20 +9,20 @@ type fileHandler struct {
 }
 
 type FileHandlerInterface interface {
-	InsertHandler(w http.ResponseWriter, r *http.Request)
-	GetOneHandler(w http.ResponseWriter, r *http.Request)
-	DeleteHandler(w http.ResponseWriter, r *http.Request)
+	InsertHandler(c *gin.Context)
+	GetOneHandler(c *gin.Context)
+	DeleteHandler(c *gin.Context)
 }
 
 func NewFileHandler(service FileServiceInterface) FileHandlerInterface {
 	return &fileHandler{service}
 }
 
-func (h *fileHandler) InsertHandler(w http.ResponseWriter, r *http.Request) {
+func (h *fileHandler) InsertHandler(c *gin.Context) {
 }
 
-func (h *fileHandler) GetOneHandler(w http.ResponseWriter, r *http.Request) {
+func (h *fileHandler) GetOneHandler(c *gin.Context) {
 }
 
-func (h *fileHandler) DeleteHandler(w http.ResponseWriter, r *http.Request) {
+func (h *fileHandler) DeleteHandler(c *gin.Context) {
 }

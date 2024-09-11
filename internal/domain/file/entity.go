@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+const maxFileSize = 10 << 20
+
+var allowedExtensions = map[string]bool{
+	".jpg":  true,
+	".jpeg": true,
+	".png":  true,
+	".gif":  true,
+}
+
 type FileResponse struct {
 	ID  uuid.UUID `json:"id"`
 	URL string    `json:"url"`

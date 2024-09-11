@@ -1,16 +1,21 @@
 package file
 
 import (
-	"net/http"
-
 	"github.com/felipeversiane/s3filestorage/internal/infra/services/aws"
 	"github.com/felipeversiane/s3filestorage/internal/infra/services/database"
+	"github.com/gin-gonic/gin"
 )
 
-func FileRouter(mux *http.ServeMux) {
+func FileRouter(v1 *gin.RouterGroup) *gin.RouterGroup {
 	handler := NewFileHandler(NewFileService(NewFileRepository(database.Connection, aws.S3Client)))
-	mux.HandleFunc("POST /api/v1/file", handler.InsertHandler)
-	mux.HandleFunc("GET /api/v1/file/{id}", handler.GetOneHandler)
-	mux.HandleFunc("DELETE /api/v1/file", handler.DeleteHandler)
 
+	file := v1.Group("/file")
+	{
+		file.POST("/", handler.InsertHandler)
+		file.GET("/:id", handler.GetOneHandler)
+		file.DELETE("/:id", handler.DeleteHandler)
+
+	}
+
+	return file
 }
