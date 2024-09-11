@@ -1,6 +1,48 @@
 version: '3.9'
 
 services:
+  db:
+    env_file: .env
+    container_name: pg02
+    build:
+      context: .
+      dockerfile: build/db/Dockerfile
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - ./conf/postgres/:/docker-entrypoint-initdb.d/
+    ports:
+       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - golangnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -d ${POSTGRES_DB} -U ${POSTGRES_USER} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    command:
+      [
+        "postgres",
+        "-c","config_file=/docker-entrypoint-initdb.d/postgresql.conf",
+      ]
+
+  migrate:
+    image: migrate/migrate
+    container_name: mg02
+    volumes:
+      - ./migrations:/migrations
+    command: [
+      "-path", "/migrations",
+      "-database", 
+      "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable",
+      "up"
+    ]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - golangnetwork
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -22,14 +64,30 @@ services:
       dockerfile: ./build/api/Dockerfile
     env_file: .env
     image: app
-    depends_on:
-      - minio
     container_name: go03
     restart: unless-stopped
     networks: 
       - golangnetwork
+    depends_on:
+      - minio
+      - migrate
+    expose:
+      - "${API_PORT}"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nx02
     ports:
       - "8000:8000"
+    volumes:
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api
+    networks:
+      - golangnetwork
+
+volumes:
+  local_postgres_data: {}
 
 networks:
   golangnetwork:
