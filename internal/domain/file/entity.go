@@ -25,7 +25,7 @@ type FileResponse struct {
 	URL string    `json:"url"`
 }
 
-func DomainToFileResponse(file domain.File) *FileResponse {
+func DomainToFileResponse(file *domain.File) *FileResponse {
 	return &FileResponse{
 		ID:  file.ID,
 		URL: file.URL,

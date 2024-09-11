@@ -7,11 +7,13 @@ import (
 type File struct {
 	ID  uuid.UUID
 	URL string
+	Key string
 }
 
-func NewFile(url string) *File {
+func NewFile(url, key string) *File {
 	return &File{
 		ID:  uuid.New(),
 		URL: url,
+		Key: key,
 	}
 }

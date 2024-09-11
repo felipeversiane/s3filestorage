@@ -12,14 +12,16 @@ type config struct {
 		Port string
 	}
 	AWS struct {
-		ACCESS_KEY        string
-		SECRET_ACCESS_KEY string
+		AccessKey       string
+		SecretAccessKey string
+		Region          string
 	}
 	S3 struct {
 		Region   string
 		Endpoint string
 		Bucket   string
 		ACL      string
+		URL      string
 	}
 	Database struct {
 		Host     string
@@ -37,11 +39,13 @@ func NewConfig() {
 			Endpoint string
 			Bucket   string
 			ACL      string
+			URL      string
 		}{
 			Region:   getEnvOrDie("AWS_REGION"),
 			Endpoint: getEnvOrDie("AWS_ENDPOINT"),
 			Bucket:   getEnvOrDie("AWS_S3_BUCKET"),
 			ACL:      getEnvOrDie("AWS_S3_ACL"),
+			URL:      getEnvOrDie("AWS_URL"),
 		},
 		Api: struct {
 			Port string
@@ -49,11 +53,13 @@ func NewConfig() {
 			Port: getEnvOrDie("API_PORT"),
 		},
 		AWS: struct {
-			ACCESS_KEY        string
-			SECRET_ACCESS_KEY string
+			AccessKey       string
+			SecretAccessKey string
+			Region          string
 		}{
-			ACCESS_KEY:        getEnvOrDie("AWS_ACCESS_KEY"),
-			SECRET_ACCESS_KEY: getEnvOrDie("AWS_SECRET_ACCESS_KEY"),
+			AccessKey:       getEnvOrDie("AWS_ACCESS_KEY"),
+			SecretAccessKey: getEnvOrDie("AWS_SECRET_ACCESS_KEY"),
+			Region:          getEnvOrDie("AWS_REGION"),
 		},
 		Database: struct {
 			Host     string

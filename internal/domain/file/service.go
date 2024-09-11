@@ -22,7 +22,14 @@ func NewFileService(repository FileRepositoryInterface) FileServiceInterface {
 }
 
 func (s *fileService) InsertService(ctx context.Context, fileHeader *multipart.FileHeader) (*FileResponse, *rest.RestError) {
-	return nil, nil
+	if err := validateFile(fileHeader); err != nil {
+		return nil, err
+	}
+	domain, err := s.repository.InsertRepository(ctx, fileHeader)
+	if err != nil {
+		return nil, err
+	}
+	return DomainToFileResponse(domain), nil
 }
 
 func (s *fileService) GetOneService(ctx context.Context, fileHeader *multipart.FileHeader) (*FileResponse, *rest.RestError) {

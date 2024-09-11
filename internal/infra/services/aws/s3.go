@@ -3,7 +3,9 @@ package aws
 import (
 	"context"
 	"fmt"
+	"mime"
 	"mime/multipart"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -25,6 +27,7 @@ type s3Service struct {
 	Bucket string
 	Region string
 	ACL    string
+	URL    string
 }
 
 func NewS3Service(
@@ -33,7 +36,8 @@ func NewS3Service(
 	acl,
 	accessKey,
 	secretAccessKey,
-	endpoint string,
+	endpoint,
+	url string,
 ) error {
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String(region),
@@ -51,6 +55,7 @@ func NewS3Service(
 		Bucket: bucket,
 		Region: region,
 		ACL:    acl,
+		URL:    url,
 	}
 
 	return nil
@@ -80,17 +85,23 @@ func (s *s3Service) CreateBucket(ctx context.Context) error {
 func (s *s3Service) UploadFile(ctx context.Context, bucketKey string, file multipart.File) (string, error) {
 	defer file.Close()
 
+	ext := filepath.Ext(bucketKey)
+	contentType := mime.TypeByExtension(ext)
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
 	_, err := s.Client.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(s.Bucket),
-		Key:    aws.String(bucketKey),
-		Body:   file,
-		ACL:    aws.String(s.ACL),
+		Bucket:      aws.String(s.Bucket),
+		Key:         aws.String(bucketKey),
+		Body:        file,
+		ACL:         aws.String(s.ACL),
+		ContentType: aws.String(contentType),
 	})
 	if err != nil {
 		return "", fmt.Errorf("unable to upload file %s to bucket %s: %v", bucketKey, s.Bucket, err)
 	}
 
-	url := fmt.Sprintf("%s/%s", s.Bucket, bucketKey)
+	url := fmt.Sprintf("%s/%s/%s", s.URL, s.Bucket, bucketKey)
 	return url, nil
 }
 

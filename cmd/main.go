@@ -30,11 +30,12 @@ func main() {
 	slog.Info("Creating a new AWS-S3 service...")
 	err := aws.NewS3Service(
 		config.Conf.S3.Bucket,
-		config.Conf.S3.Region,
+		config.Conf.AWS.Region,
 		config.Conf.S3.ACL,
-		config.Conf.AWS.ACCESS_KEY,
-		config.Conf.AWS.SECRET_ACCESS_KEY,
-		config.Conf.S3.Endpoint)
+		config.Conf.AWS.AccessKey,
+		config.Conf.AWS.SecretAccessKey,
+		config.Conf.S3.Endpoint,
+		config.Conf.S3.URL)
 	if err != nil {
 		slog.Error(err.Error())
 	}
